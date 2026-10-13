@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Painel Treinão Maria Pitanga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Figtree:wght@400;500;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+/* Layout: ferramenta de balcão — números no topo, busca grande, lista com botão de baixa */
+:root{
+  --acai:#2a0f33; --acai-2:#3b1747; --pitanga:#ff5a36; --creme:#fbefe6;
+  --lilas:#c9a9d6; --linha:#5a2f69; --ok:#7ee0a1;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--acai);color:var(--creme);font-family:var(--body);font-size:16px;line-height:1.45}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:flex;flex-direction:column;gap:18px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--display);font-weight:800;font-size:22px;margin:0}
+h1 span{color:var(--pitanga)}
+.link{background:none;border:0;color:var(--lilas);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer}
+.nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.num{border:1px solid var(--linha);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:2px}
+.num small{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--lilas)}
+.num strong{font-family:var(--display);font-size:26px;font-variant-numeric:tabular-nums}
+.num.destaque strong{color:var(--pitanga)}
+input,select{font:inherit;font-size:17px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--linha);background:var(--acai-2);color:var(--creme);width:100%}
+input:focus,select:focus{outline:none;border-color:var(--pitanga)}
+.filtros{display:grid;grid-template-columns:1fr auto;gap:10px}
+.lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border-top:1px solid var(--linha)}
+.item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 2px;border-bottom:1px solid var(--linha)}
+.item>div{min-width:0}
+.item b{display:block;font-weight:700;overflow-wrap:anywhere}
+.item span{font-size:14px;color:var(--lilas)}
+.cod{font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:.08em;color:var(--creme);background:var(--acai-2);border:1.5px solid var(--linha);border-radius:8px;padding:6px 8px;font-variant-numeric:tabular-nums}
+.item.achado{background:rgba(255,90,54,.12);border-radius:10px}
+.item.achado .cod{border-color:var(--pitanga);color:var(--pitanga)}
+.btn{font-family:var(--display);font-weight:600;font-size:14px;border:0;border-radius:10px;padding:12px 14px;background:var(--pitanga);color:#fff;cursor:pointer;white-space:nowrap}
+.btn:focus-visible{outline:3px solid var(--creme);outline-offset:2px}
+.btn.feito{background:transparent;color:var(--ok);border:1.5px solid var(--ok)}
+.equipes{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:13px;border:1px solid var(--linha);border-radius:999px;padding:4px 10px;color:var(--lilas)}
+.tag b{color:var(--creme)}
+.login{display:flex;flex-direction:column;gap:12px;max-width:380px}
+.aviso{font-size:14px;color:#ffb3a3;margin:0}
+.vazio{color:var(--lilas);text-align:center;padding:24px 0;margin:0}
+h2{font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--lilas);margin:0}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <h1>Treinão <span>22/10</span></h1>
+    <button class="link" id="sair" hidden>Sair</button>
+  </header>
+
+  <section id="tela-login" class="login">
+    <p style="margin:0;color:var(--lilas)">Acesso da equipe Maria Pitanga.</p>
+    <input id="email" type="email" autocomplete="username" placeholder="E-mail">
+    <input id="senha" type="password" autocomplete="current-password" placeholder="Senha">
+    <button class="btn" id="entrar">Entrar</button>
+    <p class="aviso" id="erro-login" hidden></p>
+  </section>
+
+  <section id="tela-painel" hidden style="display:flex;flex-direction:column;gap:18px">
+    <div class="nums">
+      <div class="num"><small>Inscritos</small><strong id="n-insc">0</strong></div>
+      <div class="num destaque"><small>Vagas restantes</small><strong id="n-vagas">200</strong></div>
+      <div class="num"><small>Açaís entregues</small><strong id="n-acai">0</strong></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <h2>Por equipe</h2>
+      <div class="equipes" id="equipes"></div>
+    </div>
+
+    <div class="filtros">
+      <input id="busca" type="search" autocapitalize="characters" placeholder="Código do vale, nome, WhatsApp ou equipe">
+      <select id="filtro" aria-label="Filtrar">
+        <option value="todos">Todos</option>
+        <option value="pendentes">Sem açaí</option>
+        <option value="entregues">Com açaí</option>
+      </select>
+    </div>
+
+    <ul class="lista" id="lista"></ul>
+    <p class="vazio" id="vazio" hidden>Nenhuma inscrição encontrada.</p>
+  </section>
+</main>
+
+<script>
+const SUPABASE_URL = "https://hoimdadykqqnucrddwlc.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvaW1kYWR5a3FxbnVjcmRkd2xjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMjU5NDgsImV4cCI6MjEwNjcwMTk0OH0.argbq5CGes2tqmgbsTtgZiaxCPeWwKIia6QkvzuC4sk";
+const VAGAS = 200;
+
+const $ = id => document.getElementById(id);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let dados = [];
+
+function fone(w){ const d = (w||"").slice(2); return "(" + d.slice(0,2) + ") " + d.slice(2,3) + " " + d.slice(3,7) + "-" + d.slice(7); }
+function sem(s){ return (s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase(); }
+
+function render(){
+  $("n-insc").textContent = dados.length;
+  $("n-vagas").textContent = Math.max(VAGAS - dados.length, 0);
+  $("n-acai").textContent = dados.filter(d => d.retirou_acai).length;
+
+  const porEquipe = {};
+  dados.forEach(d => { const k = d.equipe.trim(); porEquipe[k] = (porEquipe[k]||0) + 1; });
+  const eq = $("equipes"); eq.innerHTML = "";
+  Object.entries(porEquipe).sort((a,b)=>b[1]-a[1]).forEach(([n,q]) => {
+    const t = document.createElement("span"); t.className = "tag";
+    const b = document.createElement("b"); b.textContent = q;
+    t.append(b, " " + n); eq.append(t);
+  });
+
+  const q = sem($("busca").value.trim()), f = $("filtro").value;
+  const qd = q.replace(/\D/g,"");
+  const qc = q.toUpperCase().replace(/[^A-Z0-9]/g,"");
+  const vis = dados.filter(d =>
+    (f === "todos" || (f === "pendentes" ? !d.retirou_acai : d.retirou_acai)) &&
+    (!q || d.codigo === qc || sem(d.nome).includes(q) || sem(d.equipe).includes(q) || (qd.length >= 3 && d.whatsapp.includes(qd)))
+  );
+  // código exato vem primeiro e destacado
+  if (qc.length === 4) vis.sort((a,b) => (b.codigo === qc) - (a.codigo === qc));
+  const ul = $("lista"); ul.innerHTML = "";
+  vis.forEach(d => {
+    const li = document.createElement("li");
+    li.className = "item" + (qc.length === 4 && d.codigo === qc ? " achado" : "");
+    const cod = document.createElement("span"); cod.className = "cod"; cod.textContent = d.codigo || "—";
+    const info = document.createElement("div");
+    const b = document.createElement("b"); b.textContent = d.nome;
+    const s = document.createElement("span"); s.textContent = d.equipe + " · " + fone(d.whatsapp);
+    info.append(b, s);
+    const btn = document.createElement("button");
+    btn.className = "btn" + (d.retirou_acai ? " feito" : "");
+    btn.textContent = d.retirou_acai ? "Entregue ✓" : "Entregar açaí";
+    btn.onclick = () => alternar(d, btn);
+    li.append(cod, info, btn); ul.append(li);
+  });
+  $("vazio").hidden = vis.length > 0;
+}
+
+async function alternar(d, btn){
+  const novo = !d.retirou_acai;
+  // desfazer uma entrega pede confirmação, para não apagar uma baixa por toque acidental
+  if (!novo && !confirm("Desfazer a entrega do açaí de " + d.nome + "?")) return;
+  btn.disabled = true;
+  const { error } = await sb.from("inscricoes_treinao")
+    .update({ retirou_acai: novo, retirado_em: novo ? new Date().toISOString() : null })
+    .eq("id", d.id);
+  btn.disabled = false;
+  if (error) { alert("Não salvou. Tente de novo."); return; }
+  d.retirou_acai = novo; render();
+}
+
+async function carregar(){
+  const { data, error } = await sb.from("inscricoes_treinao")
+    .select("id,codigo,nome,whatsapp,equipe,retirou_acai,criado_em").order("nome");
+  if (error) return;
+  dados = data || [];
+  if (!dados.length && (await sb.auth.getSession()).data.session){
+    $("vazio").textContent = "Nenhuma inscrição ainda (ou seu e-mail não está liberado na equipe).";
+  }
+  render();
+}
+
+async function mostrar(){
+  const { data } = await sb.auth.getSession();
+  const logado = !!data.session;
+  $("tela-login").hidden = logado;
+  $("tela-painel").hidden = !logado;
+  $("sair").hidden = !logado;
+  if (logado) carregar();
+}
+
+$("entrar").onclick = async () => {
+  $("erro-login").hidden = true;
+  const { error } = await sb.auth.signInWithPassword({ email: $("email").value.trim(), password: $("senha").value });
+  if (error){ $("erro-login").textContent = "E-mail ou senha incorretos."; $("erro-login").hidden = false; return; }
+  mostrar();
+};
+$("sair").onclick = async () => { await sb.auth.signOut(); mostrar(); };
+$("busca").oninput = render;
+$("filtro").onchange = render;
+
+sb.channel("insc").on("postgres_changes", { event: "*", schema: "public", table: "inscricoes_treinao" }, carregar).subscribe();
+setInterval(() => { if (!$("tela-painel").hidden) carregar(); }, 20000);
+mostrar();
+</script>
+</body>
+</html>

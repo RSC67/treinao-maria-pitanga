@@ -8,3 +8,7 @@ Página de inscrição do treinão de reinauguração da Maria Pitanga Capistran
 ## Publicar no GitHub Pages
 
 Settings → Pages → *Deploy from a branch* → escolha a branch com o `index.html` e a pasta `/ (root)`.
+
+## Painel do balcão
+
+`painel.html` (publicado em `/painel.html`): login da equipe, contadores, busca por código do vale, nome, WhatsApp ou equipe, e o botão de entregar o açaí. Só os e-mails da tabela `staff_treinao` com login criado em Supabase → Authentication → Users conseguem ver as inscrições.
