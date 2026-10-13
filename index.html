@@ -167,6 +167,7 @@ form{display:flex;flex-direction:column;gap:16px}
 .vale-ticket small{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tinta-2)}
 .vale-ticket strong{font-family:var(--display);font-weight:900;font-size:26px;line-height:1.1;overflow-wrap:anywhere}
 .vale-ticket .eq{font-size:15px;color:var(--tinta-2)}
+.vale-ticket .codigo{font-family:var(--display);font-weight:900;font-size:40px;letter-spacing:.12em;line-height:1;color:var(--tinta);margin:6px 0 2px}
 .vale-ticket .valor{font-family:var(--display);font-weight:700;color:var(--pitanga);font-size:15px;margin-top:6px}
 .vale p{margin:0;font-size:15px;color:var(--tinta-2)}
 .btn-sec{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:15px;color:var(--tinta);border:2px solid var(--tinta);border-radius:12px;padding:13px 16px}
@@ -295,11 +296,12 @@ footer{border-top:1px solid var(--linha);padding-block:22px calc(22px + env(safe
           <h2 id="ok-titulo">Tá dentro!</h2>
           <div class="vale-ticket">
             <small>Vale 1 açaí · Treinão 22/10</small>
+            <span class="codigo" id="ok-codigo">—</span>
             <strong id="ok-nome">—</strong>
             <span class="eq" id="ok-equipe"></span>
             <span class="valor">Maria Pitanga Capistrano</span>
           </div>
-          <p id="ok-texto">Tire um print desta tela. Depois do treino, mostre no balcão e retire seu açaí.</p>
+          <p id="ok-texto">Tire um print desta tela. Depois do treino, mostre o código no balcão e retire seu açaí.</p>
           <a class="btn-sec" id="ok-grupo" href="#" target="_blank" rel="noopener" hidden>Entrar no grupo dos atletas</a>
         </div>
       </section>
@@ -451,16 +453,26 @@ function validar(){
 }
 function alerta(txt){ const a = $("alerta"); a.textContent = txt; a.hidden = !txt; }
 
+/* Código do vale: 4 caracteres sem letras/números que se confundem (0/O, 1/I/L) */
+function gerarCodigo(){
+  const A = "ABCDEFGHJKMNPQRSTUVWXYZ23456789", n = new Uint32Array(4);
+  crypto.getRandomValues(n);
+  return [...n].map(x => A[x % A.length]).join("");
+}
 async function salvarSupabase(dados){
-  const res = await supa("/rest/v1/inscricoes_treinao", {
-    method: "POST", headers: { "Prefer": "return=minimal" }, body: JSON.stringify(dados)
-  });
-  if (res.status === 409) throw { code: "duplicado" };
-  if (!res.ok){
+  for (let tentativa = 0; tentativa < 3; tentativa++){
+    dados.codigo = gerarCodigo();
+    const res = await supa("/rest/v1/inscricoes_treinao", {
+      method: "POST", headers: { "Prefer": "return=minimal" }, body: JSON.stringify(dados)
+    });
+    if (res.ok) return;
     let corpo = ""; try { corpo = await res.text(); } catch(_) {}
+    if (res.status === 409 && corpo.includes("codigo")) continue; // código já usado: gera outro
+    if (res.status === 409) throw { code: "duplicado" };
     if (corpo.includes("VAGAS_ESGOTADAS")) throw { code: "esgotado" };
     throw { code: "falha", status: res.status };
   }
+  throw { code: "falha" };
 }
 
 let concluido = false;
@@ -471,11 +483,13 @@ function concluir(dados, viaWhatsapp){
   $("barra-fixa").classList.remove("on");
   const primeiro = dados.nome.split(" ")[0];
   $("ok-titulo").textContent = viaWhatsapp ? "Quase lá, " + primeiro + "!" : "Tá dentro, " + primeiro + "!";
+  $("ok-codigo").textContent = dados.codigo || "";
+  $("ok-codigo").hidden = !dados.codigo;
   $("ok-nome").textContent = dados.nome;
   $("ok-equipe").textContent = dados.equipe;
   $("ok-texto").textContent = viaWhatsapp
     ? "Envie a mensagem que abriu no WhatsApp para confirmar sua vaga. Depois, tire um print deste vale."
-    : "Tire um print desta tela. Depois do treino, mostre no balcão e retire seu açaí.";
+    : "Tire um print desta tela. Depois do treino, mostre o código no balcão e retire seu açaí.";
   if (CONFIG.GRUPO_WHATSAPP){ const g = $("ok-grupo"); g.href = CONFIG.GRUPO_WHATSAPP; g.hidden = false; }
   $("inscricao").scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -500,7 +514,7 @@ form.addEventListener("submit", async ev => {
       alerta("As inscrições ainda não foram abertas. Tente de novo mais tarde.");
     }
   } catch (e) {
-    if (e && e.code === "duplicado") alerta("Esse WhatsApp já está inscrito. Sua vaga está garantida.");
+    if (e && e.code === "duplicado") alerta("Esse WhatsApp já está inscrito. Sua vaga está garantida. Perdeu o código? Diga seu nome no balcão.");
     else if (e && e.code === "esgotado") { esgotar(); return; }
     else alerta("Não conseguimos registrar agora. Verifique sua internet e toque em “Garantir minha vaga” de novo.");
   } finally {
