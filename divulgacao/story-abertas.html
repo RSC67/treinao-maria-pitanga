@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Figtree:wght@500;600;700&display=swap">
+<style>
+/* Story 1080x1920. Mesmo conceito do post (número de peito), agora com inscrições abertas.
+   Topo e base respeitam as áreas que o Instagram cobre; o espaço tracejado é onde vai a figurinha de link. */
+:root{--acai:#26092f;--pitanga:#ff5a36;--creme:#fbefe6;--tinta-2:#6b4a74;--borda:#e6cfc4;
+  --display:"Unbounded","Arial Black",sans-serif;--body:"Figtree",sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{width:1080px;height:1920px;overflow:hidden;font-family:var(--body)}
+.story{width:1080px;height:1920px;padding:220px 80px 270px;display:flex;flex-direction:column;align-items:center;color:#fff;
+  background:repeating-linear-gradient(-45deg,transparent 0 50px,rgba(255,255,255,.06) 50px 100px),var(--pitanga)}
+.marca{font-family:var(--display);font-weight:700;font-size:36px;text-align:center}
+.marca small{display:block;font-family:var(--body);font-weight:700;font-size:21px;letter-spacing:.2em;text-transform:uppercase;opacity:.85;margin-top:4px}
+.abertas{margin-top:44px;font-family:var(--display);font-weight:900;font-size:100px;line-height:1.02;letter-spacing:-.025em;text-align:center}
+.abertas span{display:block;color:var(--acai)}
+.peito{margin-top:52px;width:900px;background:var(--creme);color:var(--acai);border-radius:36px;box-shadow:0 34px 64px -30px rgba(38,9,47,.6);transform:rotate(-2.2deg);overflow:hidden}
+.peito-topo{background:var(--acai);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:24px 34px}
+.peito-topo span{font-family:var(--display);font-weight:700;font-size:24px;letter-spacing:.1em;text-transform:uppercase}
+.furo{width:26px;height:26px;border-radius:50%;background:var(--pitanga);box-shadow:inset 0 2px 0 rgba(0,0,0,.25)}
+.peito-corpo{padding:36px 48px 42px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.rotulo{font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:.14em;text-transform:uppercase;color:var(--tinta-2)}
+.numero{font-family:var(--display);font-weight:900;font-size:216px;line-height:.9;letter-spacing:-.04em;margin:12px 0 6px}
+.numero i{font-style:normal;color:var(--pitanga)}
+.sub{font-family:var(--display);font-weight:900;font-size:46px;line-height:1;color:var(--pitanga);text-transform:uppercase}
+.corte{width:100%;border-top:3px dashed var(--borda);margin:32px 0 26px}
+.dados{width:100%;display:grid;grid-template-columns:repeat(3,1fr)}
+.dados div{display:flex;flex-direction:column;gap:6px}
+.dados div+div{border-left:2px solid var(--borda)}
+.dados small{font-size:19px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-2)}
+.dados strong{font-family:var(--display);font-weight:700;font-size:40px;line-height:1.05}
+.extras{margin-top:52px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.extras b{font-family:var(--display);font-weight:900;font-size:50px;letter-spacing:-.01em}
+.extras span{font-size:30px;font-weight:700;opacity:.95}
+.cta{margin-top:auto;padding-top:40px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.cta p{margin:0;font-family:var(--display);font-weight:700;font-size:34px;text-align:center}
+.vaga-sticker{width:520px;height:120px;border:4px dashed rgba(255,255,255,.75);border-radius:28px}
+</style>
+</head>
+<body>
+<div class="story">
+  <div class="marca">Maria Pitanga<small>Capistrano</small></div>
+
+  <div class="abertas">Inscrições<span>abertas!</span></div>
+
+  <div class="peito">
+    <div class="peito-topo"><i class="furo"></i><span>Treinão de reinauguração</span><i class="furo"></i></div>
+    <div class="peito-corpo">
+      <div class="rotulo">Dia do treinão</div>
+      <div class="numero">22<i>/</i>10</div>
+      <div class="sub">Quinta-feira</div>
+      <div class="corte"></div>
+      <div class="dados">
+        <div><small>Concentração</small><strong>19h</strong></div>
+        <div><small>Largada</small><strong>19h30</strong></div>
+        <div><small>Distância</small><strong>3 km</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="extras"><b>Inscrição gratuita</b><span>200 vagas · açaí grátis na chegada</span></div>
+
+  <div class="cta">
+    <p>Toque no link e garanta a sua vaga</p>
+    <svg width="54" height="54" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v15M6 13l6 6 6-6" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="vaga-sticker" aria-hidden="true"></div>
+  </div>
+</div>
+</body>
+</html>
