@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Figtree:wght@500;600;700&display=swap">
+<style>
+:root{--acai:#26092f;--acai-2:#35123f;--acai-3:#4a1d57;--pitanga:#ff5a36;--pitanga-2:#ff8a5c;--creme:#fbefe6;--lilas:#c8a6d6;--linha:#56285f;
+  --display:"Unbounded","Arial Black",sans-serif;--body:"Figtree",sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{width:1080px;height:1350px;background:var(--acai);color:var(--creme);font-family:var(--body);overflow:hidden}
+.post{position:relative;width:1080px;height:1350px;padding:72px 72px 0;display:flex;flex-direction:column}
+.topo{display:flex;justify-content:space-between;align-items:center}
+.marca{font-family:var(--display);font-weight:700;font-size:34px}
+.marca small{display:block;font-family:var(--body);font-weight:600;font-size:20px;letter-spacing:.16em;text-transform:uppercase;color:var(--lilas);margin-top:4px}
+.selo{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.08em;text-transform:uppercase;border:2px solid var(--linha);color:var(--pitanga-2);border-radius:999px;padding:12px 22px}
+.aviso{margin-top:64px;align-self:flex-start;background:var(--creme);color:var(--acai);font-family:var(--display);font-weight:900;font-size:34px;letter-spacing:.02em;text-transform:uppercase;border-radius:16px;padding:16px 26px}
+.aviso b{color:var(--pitanga)}
+h1{margin:34px 0 0;font-family:var(--display);font-weight:900;font-size:118px;line-height:.96;letter-spacing:-.025em}
+h1 span{display:block;color:var(--pitanga)}
+.lead{margin:34px 0 0;font-size:34px;line-height:1.35;color:var(--lilas);max-width:880px}
+.lead strong{color:var(--creme)}
+.ficha{margin-top:auto;display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--linha)}
+.ficha div{padding:28px 0 30px 26px;display:flex;flex-direction:column;gap:6px}
+.ficha div:first-child{padding-left:0}
+.ficha div+div{border-left:2px solid var(--linha)}
+.ficha small{font-size:19px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--lilas)}
+.ficha strong{font-family:var(--display);font-weight:700;font-size:40px;line-height:1.1}
+.faixa{margin:0 -72px;background:var(--pitanga);color:#fff;padding:34px 72px 40px;display:flex;justify-content:space-between;align-items:center;gap:24px}
+.faixa .t{font-family:var(--display);font-weight:900;font-size:50px;line-height:1;letter-spacing:-.01em}
+.faixa .s{font-size:25px;font-weight:600;margin-top:10px;opacity:.95}
+.seta{width:96px;height:96px;border-radius:50%;background:var(--acai);display:grid;place-items:center;flex:none}
+</style>
+</head>
+<body>
+<div class="post">
+  <div class="topo">
+    <div class="marca">Maria Pitanga<small>Capistrano</small></div>
+    <div class="selo">Treinão de reinauguração</div>
+  </div>
+
+  <div class="aviso">Inscrições abrem <b>amanhã</b> · 16/10</div>
+
+  <h1>Açaí é estilo de vida. <span>Correr também.</span></h1>
+
+  <p class="lead"><strong>Inscrição gratuita</strong>, 3 km saindo da loja e <strong>açaí grátis na chegada</strong> pra cada atleta inscrito. Só 200 vagas.</p>
+
+  <div class="ficha">
+    <div><small>Quinta</small><strong>22/10</strong></div>
+    <div><small>Concentração</small><strong>19h</strong></div>
+    <div><small>Largada</small><strong>19h30</strong></div>
+    <div><small>Distância</small><strong>3 km</strong></div>
+  </div>
+
+  <div class="faixa">
+    <div><div class="t">Link na bio</div><div class="s">Amanhã, 16/10, garanta a sua vaga</div></div>
+    <div class="seta" aria-hidden="true"><svg width="46" height="46" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M6 11l6-6 6 6" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </div>
+</div>
+</body>
+</html>
